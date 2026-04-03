@@ -208,13 +208,12 @@ export default function AdVenture() {
             zIndex: 1,
             width: '100%',
             maxWidth: 1280,
-            ml: 0,
-            mr: 'auto',
+            mx: 'auto',
             px: { xs: 2, sm: 3, lg: 5 },
             py: 4,
           }}
         >
-          <Stack spacing={2} sx={{ mb: 5, textAlign: 'left' }}>
+          <Stack spacing={2} sx={{ mb: 5, textAlign: 'center', alignItems: 'center' }}>
             <Stack direction="row" alignItems="center" spacing={1.5} flexWrap="wrap">
               <AutoAwesome sx={iconPrimarySx} />
               <Typography variant="h1" component="h1" sx={gradientTitleSx}>
@@ -222,7 +221,7 @@ export default function AdVenture() {
               </Typography>
               <Bolt sx={iconAccentSx} />
             </Stack>
-            <Typography sx={{ color: 'text.secondary', fontSize: '1.125rem', maxWidth: '42rem' }}>
+            <Typography sx={{ color: 'text.secondary', fontSize: '1.125rem', maxWidth: '42rem', textAlign: 'center' }}>
               {COPY.tagline}
             </Typography>
           </Stack>
@@ -232,7 +231,7 @@ export default function AdVenture() {
               display: 'flex',
               flexDirection: { xs: 'column', lg: 'row' },
               gap: 4,
-              alignItems: 'flex-start',
+              alignItems: 'stretch',
             }}
           >
             <Stack spacing={3} sx={{ width: '100%', flex: { lg: '1 1 0' }, minWidth: 0 }}>

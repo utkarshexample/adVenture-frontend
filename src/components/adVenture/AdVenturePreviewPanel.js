@@ -222,19 +222,38 @@ const AdVenturePreviewPanel = ({
       </>
     )}
 
-    {!generatedAd && !loading && uploadedImage && prompt.trim() && (
+    {!generatedAd && !loading && (
       <Paper
         elevation={0}
         sx={{
           ...glassPaperSx,
           p: 6,
           borderRadius: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: 580,
         }}
       >
-        <Stack spacing={1.5} alignItems="flex-start">
-          <TouchApp sx={{ fontSize: 40, color: PRIMARY }} />
-          <Typography sx={{ color: 'grey.300', fontSize: '1.125rem', textAlign: 'left' }}>
-            {COPY.ctaGenerateFirst}
+        <Stack spacing={2} alignItems="center" textAlign="center">
+          <Box
+            sx={{
+              width: 56,
+              height: 56,
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              bgcolor: `rgba(${PRIMARY_RGB}, 0.15)`,
+            }}
+          >
+            <CircularProgress size={28} thickness={5} sx={{ color: PRIMARY }} />
+          </Box>
+          <Typography sx={{ color: 'grey.200', fontWeight: 500 }}>
+            No image yet
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'grey.500' }}>
+            Generate an image to see it here
           </Typography>
         </Stack>
       </Paper>
