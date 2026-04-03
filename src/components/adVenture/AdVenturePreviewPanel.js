@@ -3,7 +3,6 @@ import AutoAwesomeOutlined from '@mui/icons-material/AutoAwesomeOutlined';
 import Download from '@mui/icons-material/Download';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import LightbulbOutlined from '@mui/icons-material/LightbulbOutlined';
-import TouchApp from '@mui/icons-material/TouchApp';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -222,7 +221,7 @@ const AdVenturePreviewPanel = ({
       </>
     )}
 
-    {!generatedAd && !loading && (
+    {!generatedAd && !loading && (!uploadedImage || !prompt?.trim()) && (
       <Paper
         elevation={0}
         sx={{
@@ -247,7 +246,7 @@ const AdVenturePreviewPanel = ({
               bgcolor: `rgba(${PRIMARY_RGB}, 0.15)`,
             }}
           >
-            <CircularProgress size={28} thickness={5} sx={{ color: PRIMARY }} />
+            <AutoAwesomeOutlined sx={{ fontSize: 28, color: PRIMARY }} />
           </Box>
           <Typography sx={{ color: 'grey.200', fontWeight: 500 }}>
             No image yet
