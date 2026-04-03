@@ -1,5 +1,36 @@
-import React, { useState, useRef } from 'react';
-import { Trash2, Download, Heart, Sparkles, Zap } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import AutoAwesome from '@mui/icons-material/AutoAwesome';
+import Bolt from '@mui/icons-material/Bolt';
+import DeleteOutline from '@mui/icons-material/DeleteOutline';
+import Download from '@mui/icons-material/Download';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import Favorite from '@mui/icons-material/Favorite';
+import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
+import LightbulbOutlined from '@mui/icons-material/LightbulbOutlined';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import TouchApp from '@mui/icons-material/TouchApp';
+import AutoAwesomeOutlined from '@mui/icons-material/AutoAwesomeOutlined';
+import {
+  DISABLED_BUTTON_BG,
+  ERROR_BORDER_COLOR,
+  FALLBACK_BACKEND_URL,
+  LOADING_ROTATE_MS,
+  MAX_DESCRIPTION_LENGTH,
+  MAX_IMAGE_SIZE_BYTES,
+  PRIMARY,
+  PRIMARY_HOVER,
+  PRIMARY_RGB,
+  PROMPT_TEXTAREA_HEIGHT_PX,
+  PROMPT_TEXTAREA_WIDTH_PX,
+  SECONDARY_CYAN,
+  SECONDARY_VIOLET,
+} from '../constants/adVentureConstants';
+import {
+  COPY,
+  LOADING_STATUS_MESSAGES,
+  LOADING_SUBTEXT,
+  REFINEMENT_SUGGESTIONS,
+} from '../copy/adVentureCopy';
 
 export default function AdVenture() {
   const [uploadedImage, setUploadedImage] = useState(null);
@@ -11,24 +42,46 @@ export default function AdVenture() {
   const [error, setError] = useState('');
   const fileInputRef = useRef(null);
   const [showFavorites, setShowFavorites] = useState(false);
+  const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
 
-  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+  const BACKEND_URL =
+    process.env.REACT_APP_BACKEND_URL || FALLBACK_BACKEND_URL;
+
+  useEffect(() => {
+    if (!loading) {
+      return undefined;
+    }
+    setLoadingMessageIndex(0);
+    const id = setInterval(() => {
+      setLoadingMessageIndex((i) => (i + 1) % LOADING_STATUS_MESSAGES.length);
+    }, LOADING_ROTATE_MS);
+    return () => clearInterval(id);
+  }, [loading]);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setUploadedImage(event.target.result);
-        setError('');
-      };
-      reader.readAsDataURL(file);
+    if (!file) {
+      return;
     }
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
+      setError(COPY.imageTooLarge);
+      e.target.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setUploadedImage(event.target.result);
+      setError('');
+    };
+    reader.readAsDataURL(file);
   };
 
   const generateAd = async (refinementPrompt = null) => {
+    if (loading) {
+      return;
+    }
     if (!uploadedImage || !prompt.trim()) {
-      setError('Please upload an image and enter a prompt');
+      setError(COPY.missingImageOrPrompt);
       return;
     }
 
@@ -55,12 +108,12 @@ export default function AdVenture() {
 
       const data = await response.json();
       setGeneratedAd(data.image_url);
-      
+
       if (refinementPrompt) {
         setRefinementHistory([...refinementHistory, refinementPrompt]);
       }
     } catch (err) {
-      setError(err.message || 'Failed to generate ad. Try again.');
+      setError(err.message || COPY.generateFailed);
     } finally {
       setLoading(false);
     }
@@ -83,22 +136,25 @@ export default function AdVenture() {
     link.click();
   };
 
-  const refinementSuggestions = [
-    'Make it more vibrant and colorful',
-    'Add a sunset background',
-    'Minimalist aesthetic with bold typography',
-    'Luxury/premium feel with metallic accents',
-    'Summer vibes with bright yellows and blues',
-    'Dark mode, moody, cinematic lighting',
-  ];
+  const iconPrimarySx = { color: PRIMARY, fontSize: 32 };
+  const iconAccentSx = { color: SECONDARY_CYAN, fontSize: 32 };
+  const iconSmSx = { fontSize: 20 };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Animated background elements */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex flex-col items-center">
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-        <div className="absolute top-40 right-10 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+        <div
+          className="absolute top-20 left-10 w-72 h-72 rounded-full mix-blend-screen filter blur-3xl opacity-[0.18] animate-blob"
+          style={{ backgroundColor: PRIMARY }}
+        />
+        <div
+          className="absolute top-40 right-10 w-72 h-72 rounded-full mix-blend-screen filter blur-3xl opacity-[0.14] animate-blob animation-delay-2000"
+          style={{ backgroundColor: SECONDARY_CYAN }}
+        />
+        <div
+          className="absolute -bottom-8 left-1/2 w-72 h-72 rounded-full mix-blend-screen filter blur-3xl opacity-[0.12] animate-blob animation-delay-4000"
+          style={{ backgroundColor: SECONDARY_VIOLET }}
+        />
       </div>
 
       <style>{`
@@ -131,58 +187,79 @@ export default function AdVenture() {
         }
         
         .glass-effect {
-          background: rgba(255, 255, 255, 0.05);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.04);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(${PRIMARY_RGB}, 0.22);
         }
         
         .gradient-text {
-          background: linear-gradient(135deg, #ec4899, #8b5cf6, #06b6d4);
+          background: linear-gradient(135deg, ${PRIMARY}, ${SECONDARY_CYAN}, ${SECONDARY_VIOLET});
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
         }
+
+        .prompt-textarea:focus {
+          outline: none;
+          box-shadow: 0 0 0 2px rgba(${PRIMARY_RGB}, 0.45);
+        }
       `}</style>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-12">
+      <div className="relative z-10 w-full max-w-5xl mx-auto px-4 py-8 flex flex-col items-center">
+        <div className="text-center mb-12 w-full">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <Sparkles className="w-8 h-8 text-pink-400" />
-            <h1 className="text-5xl font-bold gradient-text">AdGenius</h1>
-            <Zap className="w-8 h-8 text-yellow-400" />
+            <AutoAwesome sx={iconPrimarySx} />
+            <h1 className="text-5xl font-bold gradient-text">{COPY.appTitle}</h1>
+            <Bolt sx={iconAccentSx} />
           </div>
-          <p className="text-gray-300 text-lg">Transform your products into Instagram-worthy ads in seconds</p>
+          <p className="text-slate-300 text-lg max-w-xl mx-auto">{COPY.tagline}</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Panel - Upload & Prompt */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Image Upload */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full justify-items-center lg:justify-items-stretch">
+          <div className="lg:col-span-1 space-y-6 w-full max-w-md mx-auto lg:max-w-none lg:mx-0">
             <div className="glass-effect rounded-2xl p-6">
-              <h2 className="text-xl font-bold text-white mb-4">Your Product</h2>
+              <h2 className="text-xl font-bold text-white mb-4 text-center lg:text-left">
+                {COPY.yourProduct}
+              </h2>
               <div
-                className="relative border-2 border-dashed border-purple-400 rounded-xl p-8 cursor-pointer hover:border-pink-400 transition group"
-                onClick={() => fileInputRef.current?.click()}
+                className={`relative border-2 border-dashed rounded-xl p-8 transition group ${
+                  loading
+                    ? 'cursor-not-allowed opacity-60 pointer-events-none border-slate-600'
+                    : 'cursor-pointer hover:opacity-95'
+                }`}
+                style={{
+                  borderColor: loading ? undefined : `rgba(${PRIMARY_RGB}, 0.5)`,
+                }}
+                onClick={() => !loading && fileInputRef.current?.click()}
               >
                 {uploadedImage ? (
                   <div className="relative">
-                    <img src={uploadedImage} alt="Uploaded" className="w-full rounded-lg" />
+                    <img
+                      src={uploadedImage}
+                      alt="Uploaded"
+                      className="w-full rounded-lg"
+                    />
                     <button
+                      type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         setUploadedImage(null);
                       }}
-                      className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-lg hover:bg-red-600"
+                      className="absolute top-2 right-2 text-white p-2 rounded-lg hover:opacity-90"
+                      style={{ backgroundColor: PRIMARY }}
+                      aria-label={COPY.ariaRemoveImage}
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <DeleteOutline sx={{ fontSize: 20 }} />
                     </button>
                   </div>
                 ) : (
-                  <div className="text-center">
-                    <div className="text-4xl mb-3">📸</div>
-                    <p className="text-gray-300 font-semibold">Drop your image here</p>
-                    <p className="text-gray-400 text-sm">or click to browse</p>
+                  <div className="text-center flex flex-col items-center gap-2">
+                    <PhotoCamera
+                      sx={{ fontSize: 48, color: PRIMARY, opacity: 0.9 }}
+                    />
+                    <p className="text-slate-200 font-semibold">{COPY.dropImageHere}</p>
+                    <p className="text-slate-400 text-sm">{COPY.clickToBrowse}</p>
+                    <p className="text-slate-500 text-xs mt-1">{COPY.maxImageHint}</p>
                   </div>
                 )}
               </div>
@@ -192,54 +269,91 @@ export default function AdVenture() {
                 accept="image/*"
                 onChange={handleImageUpload}
                 className="hidden"
+                disabled={loading}
               />
             </div>
 
-            {/* Prompt Input */}
-            <div className="glass-effect rounded-2xl p-6">
-              <h2 className="text-xl font-bold text-white mb-4">Ad Description</h2>
+            <div className="glass-effect rounded-2xl p-6 flex flex-col items-center">
+              <div className="flex items-center justify-between w-full max-w-[320px] mb-2">
+                <h2 className="text-xl font-bold text-white">{COPY.adDescription}</h2>
+                <span className="text-slate-400 text-sm tabular-nums">
+                  {prompt.length}/{MAX_DESCRIPTION_LENGTH}
+                </span>
+              </div>
               <textarea
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                placeholder="e.g., 'Instagram carousel ad showing product in luxury home setting with warm lighting'"
-                className="w-full h-24 bg-slate-800 text-white rounded-xl p-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none"
+                maxLength={MAX_DESCRIPTION_LENGTH}
+                placeholder={COPY.promptPlaceholder}
+                className="prompt-textarea bg-slate-800/90 text-white rounded-xl p-3 placeholder-slate-500 resize-none text-sm"
+                style={{
+                  width: `${PROMPT_TEXTAREA_WIDTH_PX}px`,
+                  height: `${PROMPT_TEXTAREA_HEIGHT_PX}px`,
+                }}
               />
               <button
+                type="button"
                 onClick={() => generateAd()}
                 disabled={loading || !uploadedImage || !prompt.trim()}
-                className="w-full mt-4 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition transform hover:scale-105"
+                className="mt-4 font-bold py-3 rounded-xl transition text-white w-full max-w-[320px] disabled:cursor-not-allowed"
+                style={
+                  !uploadedImage || !prompt.trim()
+                    ? { background: DISABLED_BUTTON_BG, opacity: 0.75 }
+                    : {
+                        background: `linear-gradient(90deg, ${PRIMARY} 0%, ${PRIMARY_HOVER} 100%)`,
+                        opacity: loading ? 0.88 : 1,
+                      }
+                }
               >
-                {loading ? 'Creating magic...' : 'Generate Ad'}
+                {loading ? COPY.generating : COPY.generateAd}
               </button>
             </div>
 
-            {/* Favorites */}
             {favorites.length > 0 && (
               <div className="glass-effect rounded-2xl p-6">
                 <button
+                  type="button"
                   onClick={() => setShowFavorites(!showFavorites)}
                   className="w-full text-white font-bold flex items-center justify-between"
                 >
-                  <span>❤️ Favorites ({favorites.length})</span>
-                  <span>{showFavorites ? '▼' : '▶'}</span>
+                  <span className="flex items-center gap-2">
+                    <Favorite sx={{ color: SECONDARY_CYAN, fontSize: 22 }} />
+                    {COPY.favoritesLabel} ({favorites.length})
+                  </span>
+                  <ExpandMore
+                    sx={{
+                      color: 'white',
+                      transform: showFavorites ? 'rotate(180deg)' : 'none',
+                      transition: 'transform 0.2s',
+                    }}
+                  />
                 </button>
                 {showFavorites && (
                   <div className="mt-4 space-y-2 max-h-96 overflow-y-auto">
                     {favorites.map((fav, idx) => (
                       <div key={idx} className="relative group">
-                        <img src={fav} alt={`Favorite ${idx}`} className="w-full rounded-lg" />
+                        <img
+                          src={fav}
+                          alt={`Favorite ${idx}`}
+                          className="w-full rounded-lg"
+                        />
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition rounded-lg flex items-center justify-center gap-2">
                           <button
+                            type="button"
                             onClick={() => downloadImage(fav)}
-                            className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded"
+                            className="text-white p-2 rounded hover:opacity-90"
+                            style={{ backgroundColor: PRIMARY }}
+                            aria-label={COPY.ariaDownload}
                           >
-                            <Download className="w-4 h-4" />
+                            <Download sx={iconSmSx} />
                           </button>
                           <button
+                            type="button"
                             onClick={() => removeFavorite(idx)}
-                            className="bg-red-500 hover:bg-red-600 text-white p-2 rounded"
+                            className="bg-red-600 hover:bg-red-700 text-white p-2 rounded"
+                            aria-label={COPY.ariaRemoveFavorite}
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <DeleteOutline sx={iconSmSx} />
                           </button>
                         </div>
                       </div>
@@ -250,74 +364,106 @@ export default function AdVenture() {
             )}
           </div>
 
-          {/* Right Panel - Generated Ad & Refinement */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-6 w-full max-w-3xl mx-auto">
             {error && (
-              <div className="glass-effect border-l-4 border-red-500 rounded-2xl p-6">
+              <div
+                className="glass-effect border-l-4 rounded-2xl p-6"
+                style={{ borderLeftColor: ERROR_BORDER_COLOR }}
+              >
                 <p className="text-red-300">{error}</p>
               </div>
             )}
 
             {generatedAd && (
               <>
-                {/* Generated Ad Preview */}
-                <div className="glass-effect rounded-2xl p-6">
-                  <h2 className="text-xl font-bold text-white mb-4">Your Instagram Ad</h2>
+                <div className="glass-effect rounded-2xl p-6 text-center lg:text-left">
+                  <h2 className="text-xl font-bold text-white mb-4">
+                    {COPY.yourInstagramAd}
+                  </h2>
                   <div className="bg-black rounded-xl overflow-hidden">
-                    <img src={generatedAd} alt="Generated Ad" className="w-full" />
+                    <img
+                      src={generatedAd}
+                      alt="Generated Ad"
+                      className="w-full"
+                    />
                   </div>
-                  <div className="flex gap-3 mt-4">
+                  <div className="flex gap-3 mt-4 flex-col sm:flex-row">
                     <button
+                      type="button"
                       onClick={addToFavorites}
-                      className="flex-1 bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2"
+                      className="flex-1 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 hover:opacity-90"
+                      style={{ backgroundColor: PRIMARY }}
                     >
-                      <Heart className="w-5 h-5" /> Save to Favorites
+                      <FavoriteBorder sx={{ fontSize: 22 }} /> {COPY.saveToFavorites}
                     </button>
                     <button
+                      type="button"
                       onClick={() => downloadImage(generatedAd)}
-                      className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2"
+                      className="flex-1 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 hover:opacity-90"
+                      style={{ backgroundColor: PRIMARY_HOVER }}
                     >
-                      <Download className="w-5 h-5" /> Download
+                      <Download sx={{ fontSize: 22 }} /> {COPY.download}
                     </button>
                   </div>
                 </div>
 
-                {/* Refinement Options */}
                 <div className="glass-effect rounded-2xl p-6">
-                  <h2 className="text-xl font-bold text-white mb-4">✨ Refine Your Ad</h2>
+                  <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <AutoAwesomeOutlined sx={{ color: SECONDARY_CYAN }} />
+                    {COPY.refineYourAd}
+                  </h2>
                   <div className="space-y-2">
-                    {refinementSuggestions.map((suggestion, idx) => (
+                    {REFINEMENT_SUGGESTIONS.map((suggestion, idx) => (
                       <button
+                        type="button"
                         key={idx}
                         onClick={() => generateAd(suggestion)}
                         disabled={loading}
-                        className="w-full text-left p-3 bg-slate-800 hover:bg-slate-700 text-gray-300 hover:text-white rounded-lg transition disabled:opacity-50"
+                        className="w-full text-left p-3 bg-slate-800/80 hover:bg-slate-800 text-slate-200 hover:text-white rounded-lg transition disabled:opacity-50 flex items-start gap-2"
                       >
-                        💡 {suggestion}
+                        <LightbulbOutlined
+                          sx={{ fontSize: 20, color: SECONDARY_VIOLET, mt: '2px' }}
+                        />
+                        <span>{suggestion}</span>
                       </button>
                     ))}
                   </div>
                   <input
                     type="text"
-                    placeholder="Or describe your own refinement..."
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter' && e.target.value.trim()) {
+                    placeholder={COPY.refinementPlaceholder}
+                    onKeyDown={(e) => {
+                      if (
+                        e.key === 'Enter' &&
+                        e.target.value &&
+                        e.target.value.trim()
+                      ) {
                         generateAd(e.target.value);
                         e.target.value = '';
                       }
                     }}
-                    className="w-full mt-4 bg-slate-800 text-white rounded-lg p-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                    className="w-full mt-4 bg-slate-800 text-white rounded-lg p-3 placeholder-slate-500 focus:outline-none"
+                    style={{ boxShadow: 'none' }}
+                    onFocus={(e) => {
+                      e.target.style.boxShadow = `0 0 0 2px rgba(${PRIMARY_RGB}, 0.4)`;
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.boxShadow = 'none';
+                    }}
                   />
                 </div>
 
-                {/* Refinement History */}
                 {refinementHistory.length > 0 && (
                   <div className="glass-effect rounded-2xl p-6">
-                    <h3 className="text-lg font-bold text-white mb-3">📝 Refinements Applied</h3>
+                    <h3 className="text-lg font-bold text-white mb-3">
+                      {COPY.refinementsApplied}
+                    </h3>
                     <div className="space-y-2">
                       {refinementHistory.map((ref, idx) => (
-                        <div key={idx} className="flex items-start gap-3 text-sm text-gray-300">
-                          <span className="text-purple-400">→</span>
+                        <div
+                          key={idx}
+                          className="flex items-start gap-3 text-sm text-slate-300"
+                        >
+                          <span style={{ color: PRIMARY }}>→</span>
                           <span>{ref}</span>
                         </div>
                       ))}
@@ -328,17 +474,26 @@ export default function AdVenture() {
             )}
 
             {!generatedAd && !loading && uploadedImage && prompt.trim() && (
-              <div className="glass-effect rounded-2xl p-12 text-center">
-                <p className="text-gray-300 text-lg">👆 Click "Generate Ad" to create your first Instagram ad</p>
+              <div className="glass-effect rounded-2xl p-12 text-center flex flex-col items-center gap-3">
+                <TouchApp sx={{ fontSize: 40, color: PRIMARY }} />
+                <p className="text-slate-300 text-lg">{COPY.ctaGenerateFirst}</p>
               </div>
             )}
 
             {loading && (
               <div className="glass-effect rounded-2xl p-12">
-                <div className="flex flex-col items-center justify-center gap-4">
-                  <div className="w-12 h-12 border-4 border-pink-400 border-t-transparent rounded-full animate-spin"></div>
-                  <p className="text-gray-300">Creating your ad with AI magic...</p>
-                  <p className="text-gray-500 text-sm">This usually takes 30-60 seconds</p>
+                <div className="flex flex-col items-center justify-center gap-4 text-center">
+                  <div
+                    className="w-12 h-12 rounded-full animate-spin"
+                    style={{
+                      border: `4px solid rgba(${PRIMARY_RGB}, 0.22)`,
+                      borderTopColor: PRIMARY,
+                    }}
+                  />
+                  <p className="text-slate-200 font-medium px-4">
+                    {LOADING_STATUS_MESSAGES[loadingMessageIndex]}
+                  </p>
+                  <p className="text-slate-500 text-sm">{LOADING_SUBTEXT}</p>
                 </div>
               </div>
             )}
