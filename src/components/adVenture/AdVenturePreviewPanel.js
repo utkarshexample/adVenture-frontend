@@ -1,7 +1,6 @@
 import React from 'react';
 import AutoAwesomeOutlined from '@mui/icons-material/AutoAwesomeOutlined';
 import Download from '@mui/icons-material/Download';
-import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import LightbulbOutlined from '@mui/icons-material/LightbulbOutlined';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
