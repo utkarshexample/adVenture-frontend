@@ -221,7 +221,7 @@ const AdVenturePreviewPanel = ({
       </>
     )}
 
-    {!generatedAd && !loading && (!uploadedImage || !prompt?.trim()) && (
+    {!generatedAd && (
       <Paper
         elevation={0}
         sx={{
@@ -246,40 +246,21 @@ const AdVenturePreviewPanel = ({
               bgcolor: `rgba(${PRIMARY_RGB}, 0.15)`,
             }}
           >
-            <AutoAwesomeOutlined sx={{ fontSize: 28, color: PRIMARY }} />
+            {loading ? (
+              <CircularProgress size={28} thickness={5} sx={{ color: PRIMARY }} />
+            ) : (
+              <AutoAwesomeOutlined sx={{ fontSize: 28, color: PRIMARY }} />
+            )}
           </Box>
-          <Typography sx={{ color: 'grey.200', fontWeight: 500 }}>
-            No image yet
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'grey.500' }}>
-            Generate an image to see it here
-          </Typography>
-        </Stack>
-      </Paper>
-    )}
 
-    {loading && (
-      <Paper
-        elevation={0}
-        sx={{
-          ...glassPaperSx,
-          p: 6,
-          borderRadius: '16px',
-        }}
-      >
-        <Stack spacing={2} alignItems="flex-start">
-          <CircularProgress
-            size={48}
-            thickness={4}
-            sx={{
-              color: PRIMARY,
-            }}
-          />
-          <Typography sx={{ color: 'grey.200', fontWeight: 500, pr: 2 }}>
-            {LOADING_STATUS_MESSAGES[loadingMessageIndex]}
+          <Typography sx={{ color: 'grey.200', fontWeight: 500 }}>
+            {loading
+              ? LOADING_STATUS_MESSAGES[loadingMessageIndex]
+              : 'No image yet'}
           </Typography>
+
           <Typography variant="body2" sx={{ color: 'grey.500' }}>
-            {LOADING_SUBTEXT}
+            {loading ? LOADING_SUBTEXT : 'Generate an image to see it here'}
           </Typography>
         </Stack>
       </Paper>
