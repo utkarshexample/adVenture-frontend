@@ -80,7 +80,7 @@ const AdVenturePromptSection = ({
               '&.Mui-focused fieldset': { borderColor: PRIMARY },
             },
             '& .MuiInputBase-input': {
-              height: `${PROMPT_TEXTAREA_HEIGHT_PX - 24}px`,
+              minHeight:`${PROMPT_TEXTAREA_HEIGHT_PX - 28}px`,
               overflow: 'auto',
               boxSizing: 'border-box',
               fontSize: '0.875rem',

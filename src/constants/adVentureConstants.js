@@ -13,7 +13,7 @@ export const LOADING_ROTATE_MS = 1500;
 export const FALLBACK_BACKEND_URL = 'http://localhost:8000';
 
 export const PROMPT_TEXTAREA_WIDTH_PX = 320;
-export const PROMPT_TEXTAREA_HEIGHT_PX = 128;
+export const PROMPT_TEXTAREA_HEIGHT_PX = 100;
 
 export const DISABLED_BUTTON_BG = '#475569';
 export const ERROR_BORDER_COLOR = '#f87171';

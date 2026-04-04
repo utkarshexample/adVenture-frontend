@@ -49,12 +49,26 @@ const AdVentureUploadPanel = ({
       }}
     >
       {uploadedImage ? (
-        <Box sx={{ position: 'relative' }}>
+        <Box
+          sx={{
+            position: 'relative',
+            width: '100%',
+            aspectRatio: '1 / 1',
+            borderRadius: '8px',
+            overflow: 'hidden',
+            bgcolor: 'black',
+          }}
+        >
           <Box
             component="img"
             src={uploadedImage}
             alt="Uploaded"
-            sx={{ width: '100%', borderRadius: '8px', display: 'block' }}
+            sx={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              display: 'block',
+            }}
           />
           <IconButton
             type="button"
@@ -79,10 +93,14 @@ const AdVentureUploadPanel = ({
       ) : (
         <Box
           sx={{
-            textAlign: 'center',
+            width: '100%',
+            aspectRatio: '1 / 1',
+            borderRadius: '8px',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
+            justifyContent: 'center',
+            textAlign: 'center',
             gap: 1,
           }}
         >
