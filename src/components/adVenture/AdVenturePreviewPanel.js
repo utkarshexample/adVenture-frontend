@@ -226,43 +226,64 @@ const AdVenturePreviewPanel = ({
         elevation={0}
         sx={{
           ...glassPaperSx,
-          p: 6,
+          p: 3,
           borderRadius: '16px',
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '65vh',
+          flexDirection: 'column',
+          minHeight: '100%',
         }}
       >
-        <Stack spacing={2} alignItems="center" textAlign="center">
-          <Box
-            sx={{
-              width: 56,
-              height: 56,
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              bgcolor: `rgba(${PRIMARY_RGB}, 0.15)`,
-            }}
-          >
-            {loading ? (
-              <CircularProgress size={28} thickness={5} sx={{ color: PRIMARY }} />
-            ) : (
-              <AutoAwesomeOutlined sx={{ fontSize: 28, color: PRIMARY }} />
-            )}
-          </Box>
+        <Typography
+          variant="h2"
+          component="h2"
+          sx={{ color: 'common.white',
+            textAlign: 'center',
+            mb: 2
+          }}
+        >
+          {COPY.yourInstagramAd}
+        </Typography>
+        <Box
+          sx={{
+            width: '100%',
+            flex: 1,
+            aspectRatio: '1 / 1',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Stack spacing={2} alignItems="center" textAlign="center">
+            
+            <Box
+              sx={{
+                width: 56,
+                height: 56,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                bgcolor: `rgba(${PRIMARY_RGB}, 0.15)`,
+              }}
+            >
+              {loading ? (
+                <CircularProgress size={28} thickness={5} sx={{ color: PRIMARY }} />
+              ) : (
+                <AutoAwesomeOutlined sx={{ fontSize: 28, color: PRIMARY }} />
+              )}
+            </Box>
 
-          <Typography sx={{ color: 'grey.200', fontWeight: 500 }}>
-            {loading
-              ? LOADING_STATUS_MESSAGES[loadingMessageIndex]
-              : 'No image yet'}
-          </Typography>
+            <Typography sx={{ color: 'grey.200', fontWeight: 500 }}>
+              {loading
+                ? LOADING_STATUS_MESSAGES[loadingMessageIndex]
+                : 'No image yet'}
+            </Typography>
 
-          <Typography variant="body2" sx={{ color: 'grey.500' }}>
-            {loading ? LOADING_SUBTEXT : 'Generate an image to see it here'}
-          </Typography>
-        </Stack>
+            <Typography variant="body2" sx={{ color: 'grey.500' }}>
+              {loading ? LOADING_SUBTEXT : 'Generate an image to see it here'}
+            </Typography>
+          </Stack>
+        </Box>
       </Paper>
     )}
   </Stack>
