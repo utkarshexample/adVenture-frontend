@@ -127,7 +127,8 @@ export default function AdVenture() {
   const downloadImage = (imageUrl) => {
     const link = document.createElement('a');
     link.href = imageUrl;
-    link.download = `instagram-ad-${Date.now()}.png`;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
     link.click();
   };
 

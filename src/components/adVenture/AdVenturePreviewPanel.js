@@ -62,13 +62,13 @@ const AdVenturePreviewPanel = ({
             ...glassPaperSx,
             p: 3,
             borderRadius: '16px',
-            textAlign: 'left',
+            textAlign: 'center',
           }}
         >
-          <Typography variant="h2" component="h2" sx={{ color: 'common.white', mb: 2 }}>
+          <Typography variant="h2" component="h2" sx={{ color: 'common.white', mb: 4 }}>
             {COPY.yourInstagramAd}
           </Typography>
-          <Box sx={{ bgcolor: 'common.black', borderRadius: '12px', overflow: 'hidden' }}>
+          <Box sx={{ bgcolor: 'common.black', borderRadius: '12px', overflow: 'hidden',pl: 4,pr:4,pt:6,pb:6 }}>
             <Box
               component="img"
               src={generatedAd}
@@ -79,9 +79,9 @@ const AdVenturePreviewPanel = ({
           <Stack
             direction={{ xs: 'column', sm: 'row' }}
             spacing={1.5}
-            sx={{ mt: 2, gap: 1.5 }}
+            sx={{ mt: 3, gap: 1.5 }}
           >
-            <Button
+            {/* <Button
               type="button"
               variant="contained"
               disableElevation
@@ -99,7 +99,7 @@ const AdVenturePreviewPanel = ({
             >
               <FavoriteBorder sx={{ fontSize: 22, mr: 1 }} />
               {COPY.saveToFavorites}
-            </Button>
+            </Button> */}
             <Button
               type="button"
               variant="contained"
@@ -137,7 +137,8 @@ const AdVenturePreviewPanel = ({
             </Typography>
           </Stack>
           <Stack spacing={1}>
-            {REFINEMENT_SUGGESTIONS.map((suggestion, idx) => (
+            {[...REFINEMENT_SUGGESTIONS].sort(() => 0.5 - Math.random())
+  .slice(0, 2).map((suggestion, idx) => (
               <Button
                 type="button"
                 key={idx}
@@ -178,7 +179,7 @@ const AdVenturePreviewPanel = ({
               }
             }}
             sx={{
-              mt: 2,
+              mt: 3,
               '& .MuiOutlinedInput-root': {
                 bgcolor: 'rgba(15, 23, 42, 0.95)',
                 color: 'common.white',
@@ -231,7 +232,7 @@ const AdVenturePreviewPanel = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          minHeight: 580,
+          minHeight: '65vh',
         }}
       >
         <Stack spacing={2} alignItems="center" textAlign="center">

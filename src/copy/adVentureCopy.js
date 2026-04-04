@@ -36,7 +36,7 @@ export const COPY = Object.freeze({
   yourInstagramAd: 'Your Generated Asset',
   saveToFavorites: 'Save to Favorites',
   download: 'Download',
-  refineYourAd: 'Refine Your Ad',
+  refineYourAd: 'Refine Your Asset',
   refinementPlaceholder: 'Or describe your own refinement…',
   refinementsApplied: 'Refinements Applied',
   ctaGenerateFirst: 'Click "Generate Asset" to create your first creative asset',
