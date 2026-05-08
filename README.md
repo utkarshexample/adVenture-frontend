@@ -35,7 +35,7 @@ AdVenture is an intuitive web interface that lets users:
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/adventure-frontend.git
+git clone https://github.com/utkarshexample/adVenture-frontend.git
 cd adventure-frontend
 
 # Install dependencies
